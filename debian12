@@ -76,3 +76,5 @@ sudo systemctl status nginx
 sudo supervisorctl status
 
 bench --site erp.debian.com install-app hrms
+
+créditos: https://www.howtoforge.com/how-to-install-erpnext-on-rocky-linux-9/
