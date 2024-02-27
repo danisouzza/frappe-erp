@@ -1,0 +1,78 @@
+sudo apt update
+sudo apt install python3-dev python3-venv nodejs yarnpkg npm redis-server mariadb-server nginx supervisor fail2ban libffi-dev git 
+sudo apt install python3-pip python3-testresources libssl-dev wkhtmltopdf gcc g++ make
+sudo npm install -g yarn
+
+node --version
+npm --version
+
+sudo systemctl is-enabled mariadb
+sudo systemctl is-enabled nginx
+sudo systemctl is-enabled supervisor
+sudo systemctl is-enabled redis-server
+
+sudo mariadb-secure-installation
+
+sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
+[mysqld]
+innodb-file-format=barracuda
+innodb-file-per-table=1
+innodb-large-prefix=1
+character-set-client-handshake = FALSE
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+
+#character-set-server  = utf8mb4
+#collation-server      = utf8mb4_general_ci
+
+sudo nano /etc/mysql/mariadb.conf.d/50-mysql-clients.cnf
+[mysql]
+default-character-set = utf8mb4
+
+sudo systemctl restart mariadb
+
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+sudo nano /etc/fail2ban/jail.local
+
+[DEFAULT]
+backend = systemd
+
+sudo systemctl restart fail2ban
+
+sudo useradd -m -s /bin/bash frappe
+sudo passwd frappe
+sudo usermod -aG sudo frappe
+su - frappe
+
+sudo mkdir /opt/erp
+sudo chown -R frappe:frappe /opt/erp
+cd /opt/erp
+
+sudo pip3 install frappe-bench --break-system-packages
+
+bench init --python python3.11 --frappe-branch version-15 frappe-bench
+
+cd frappe-bench
+bench new-site erp.debian.com
+bench use erp.debian.com
+
+bench get-app --branch version-15 erpnext
+bench get-app --branch version-15 hrms
+bench get-app payments
+
+bench --site erp.debian.com install-app erpnext
+
+bench --site erp.debian.com enable-scheduler
+bench --site erp.debian.com set-maintenance-mode off
+
+sudo pip3 install ansible --break-system-packages
+sudo bench setup production frappe
+sudo bench setup supervisor
+sudo bench setup nginx
+sudo bench setup production frappe
+
+sudo systemctl restart nginx supervisor
+sudo systemctl status nginx
+sudo supervisorctl status
+
+bench --site erp.debian.com install-app hrms
