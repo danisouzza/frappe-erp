@@ -70,3 +70,5 @@ sudo bench setup production frappe
 sudo supervisorctl status
 
 bench --site erp.ubuntu.com install-app hrms
+
+créditos: https://codewithkarani.com/2023/12/31/how-to-install-erpnext-version-15-in-ubuntu-a-step-by-step-guide/
