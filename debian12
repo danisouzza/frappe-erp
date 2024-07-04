@@ -77,4 +77,4 @@ sudo supervisorctl status
 
 bench --site erp.debian.com install-app hrms
 
-créditos: https://www.howtoforge.com/how-to-install-erpnext-on-rocky-linux-9/
+créditos: https://www.howtoforge.com/tutorial/how-to-install-erpnext-on-debian/
